@@ -3,6 +3,7 @@ using Employee_Management.Business.Services;
 using Employee_Management.Core.Interfaces;
 using Employee_Management.Repository.Data;
 using Employee_Management.Repository.Repositories;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -21,6 +22,18 @@ builder.Services.AddOpenApi();
 
 //Add Swagger
 builder.Services.AddSwaggerGen();
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 
@@ -43,6 +56,9 @@ if (app.Environment.IsDevelopment())
     Process.Start(processStartInfo);
 
 }
+
+// Apply the CORS policy
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
