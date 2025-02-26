@@ -1,0 +1,26 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore all .log files
+*.log
+
+# Ignore specific files
+secret-config.json
+
+# Custom ignore patterns for your project
+obj/
+obj/Debug/
+obj/Debug/net9.0/
+obj/Debug/net9.0/EmployeeApp.API.assets.cache
+
+# Ignore .vs directory
+.vs/
+
+# Ignore DocumentLayout.backup.json file in .vs directory
+.vs/EmployeeApp.API/v17/DocumentLayout.backup.json
+
+# Ignore bin directory
+bin/
+
+# Ignore EmployeeApp.Repository.dll file in bin directory
+bin/Debug/net9.0/EmployeeApp.Repository.dll
