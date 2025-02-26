@@ -10,7 +10,7 @@ namespace Employee_Management.Business.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<Employee> AddEmployeeAsync(EmployeeDto employeeDto);
+        Task<OperationResult> AddEmployeeAsync(EmployeeDto employeeDto);
         //Task<IEnumerable<EmployeeDto>> GetItems();
         //Task<EmployeeDto> GetItemById(int Id);
         //Task AddItem(EmployeeDto itemDto);

@@ -18,7 +18,7 @@ namespace Employee_Management.Business.Services
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<Employee> AddEmployeeAsync(EmployeeDto employeeDto)
+        public async Task<OperationResult> AddEmployeeAsync(EmployeeDto employeeDto)
         {
             var employee = new Employee
             {
@@ -34,7 +34,29 @@ namespace Employee_Management.Business.Services
                 }).ToList()
             };
 
-            return await _employeeRepository.AddEmployeeAsync(employee);
+              try
+              { 
+                  int rowsAffected = await _employeeRepository.AddEmployeeAsync(employee);
+
+                 return new OperationResult
+                 {
+                    Success = true,
+                    Message = "Employee added successfully.",
+                    StatusCode = 201 // Created
+                 };
+              }
+              catch (Exception ex)
+              {
+               // Log the exception (ex) as needed
+
+                return new OperationResult
+                {
+                   Success = false,
+                   Message = $"Error adding employee: {ex.Message}",
+                   StatusCode = 500 // Internal Server Error
+                };
+              }
+
         }
     }
 }

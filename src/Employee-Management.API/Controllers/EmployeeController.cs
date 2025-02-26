@@ -1,6 +1,7 @@
 ﻿using Employee_Management.Business.DTOs;
 using Employee_Management.Business.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Employee_Management.API.Controllers
@@ -24,8 +25,9 @@ namespace Employee_Management.API.Controllers
                 return BadRequest("Employee data is null");
             }
 
-            var employee = await _employeeService.AddEmployeeAsync(employeeDto);
-            return Ok(employee);
+           var result = await _employeeService.AddEmployeeAsync(employeeDto);
+
+            return Ok(result);
         }
     }
 }

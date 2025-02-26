@@ -9,6 +9,6 @@ namespace Employee_Management.Core.Interfaces
 {
     public interface IEmployeeRepository
     {
-        Task<Employee> AddEmployeeAsync(Employee employee);
+        Task<int> AddEmployeeAsync(Employee employee);
     }
 }
