@@ -18,6 +18,7 @@ namespace Employee_Management.API.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> CreateEmployee(EmployeeDto employeeDto)
         {
             if (employeeDto == null)
@@ -26,6 +27,20 @@ namespace Employee_Management.API.Controllers
             }
 
            var result = await _employeeService.AddEmployeeAsync(employeeDto);
+
+            return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("updateAddress")]
+        public async Task<IActionResult> UpdateAddress([FromBody] UpdateAddressDto updateAddressDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _employeeService.UpdateAddressAsync(updateAddressDto);
 
             return Ok(result);
         }

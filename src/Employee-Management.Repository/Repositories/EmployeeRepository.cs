@@ -50,5 +50,25 @@ namespace Employee_Management.Repository.Repositories
             return await _context.Database.ExecuteSqlRawAsync("EXEC AddEmployee @FirstName, @LastName, @Designation, @ReportsToId, @AddressTable", parameters);
 
         }
+
+        public async Task<int> UpdateAddressAsync(Address address)
+        {
+            var parameters = new[]
+            {
+               new SqlParameter("@AddressId", SqlDbType.Int) { Value = address.Id },
+               new SqlParameter("@City", SqlDbType.NVarChar) { Value = address.City },
+               new SqlParameter("@Area", SqlDbType.NVarChar) { Value = address.Area },
+               new SqlParameter("@PinCode", SqlDbType.NVarChar) { Value = address.PinCode }
+            };
+
+             int rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                   "EXEC UpdateAddress @AddressId, @City, @Area, @PinCode",
+                   parameters
+               );
+
+            return rowsAffected;
+
+        }
+
     }
 }

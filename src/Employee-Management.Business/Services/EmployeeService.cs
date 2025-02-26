@@ -58,5 +58,52 @@ namespace Employee_Management.Business.Services
               }
 
         }
+
+        public async Task<OperationResult> UpdateAddressAsync(UpdateAddressDto updateAddressDto)
+        {
+            var address = new Address
+            {       
+                    Id   = updateAddressDto.AddressId,
+                    City = updateAddressDto.City,
+                    Area = updateAddressDto.Area,
+                    PinCode = updateAddressDto.PinCode
+            };
+
+            try
+            {
+                int rowsAffected = await _employeeRepository.UpdateAddressAsync(address);
+
+                if (rowsAffected > 0)
+                {
+                    return new OperationResult
+                    {
+                        Success = true,
+                        Message = "Address updated successfully.",
+                        StatusCode = 200 // OK
+                    };
+                }
+                else
+                {
+                    return new OperationResult
+                    {
+                        Success = false,
+                        Message = "Address not found.",
+                        StatusCode = 404 // Not Found
+                    };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) as needed
+
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = $"Error updating address: {ex.Message}",
+                    StatusCode = 500 // Internal Server Error
+                };
+            }
+        }
     }
 }
