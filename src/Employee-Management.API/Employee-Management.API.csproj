@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Employee-Management.Business\Employee-Management.Business.csproj" />
     <ProjectReference Include="..\Employee-Management.Repository\Employee-Management.Repository.csproj" />
   </ItemGroup>
 
