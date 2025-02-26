@@ -12,7 +12,10 @@ namespace Employee_Management.Business.Interfaces
     {
         Task<OperationResult> AddEmployeeAsync(EmployeeDto employeeDto);
         Task<OperationResult> UpdateAddressAsync(UpdateAddressDto updateAddressDto);
+<<<<<<< HEAD
         Task<List<Address>> GetEmployeeAddressesAsync(int employeeId);
+=======
+>>>>>>> a2ad6e61066e0de017e7c58fc38960ec8de31505
         //Task<IEnumerable<EmployeeDto>> GetItems();
         //Task<EmployeeDto> GetItemById(int Id);
         //Task AddItem(EmployeeDto itemDto);

@@ -105,11 +105,14 @@ namespace Employee_Management.Business.Services
                 };
             }
         }
+<<<<<<< HEAD
 
         public async Task<List<Address>> GetEmployeeAddressesAsync(int employeeId)
         {
             return await _employeeRepository.GetEmployeeAddressesAsync(employeeId);
         }
 
+=======
+>>>>>>> a2ad6e61066e0de017e7c58fc38960ec8de31505
     }
 }
