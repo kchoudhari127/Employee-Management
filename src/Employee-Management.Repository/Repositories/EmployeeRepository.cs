@@ -50,5 +50,58 @@ namespace Employee_Management.Repository.Repositories
             return await _context.Database.ExecuteSqlRawAsync("EXEC AddEmployee @FirstName, @LastName, @Designation, @ReportsToId, @AddressTable", parameters);
 
         }
+
+        public async Task<int> UpdateAddressAsync(Address address)
+        {
+            var parameters = new[]
+            {
+               new SqlParameter("@AddressId", SqlDbType.Int) { Value = address.Id },
+               new SqlParameter("@City", SqlDbType.NVarChar) { Value = address.City },
+               new SqlParameter("@Area", SqlDbType.NVarChar) { Value = address.Area },
+               new SqlParameter("@PinCode", SqlDbType.NVarChar) { Value = address.PinCode }
+            };
+
+             int rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                   "EXEC UpdateAddress @AddressId, @City, @Area, @PinCode",
+                   parameters
+               );
+
+            return rowsAffected;
+
+        }
+
+        public async Task<List<Address>> GetEmployeeAddressesAsync(int employeeId)
+        {
+            var addressList = new List<Address>();
+
+            using (var connection = _context.Database.GetDbConnection())
+            {
+                await connection.OpenAsync();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "GetEmployeeAddresses";
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@EmployeeId", employeeId));
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            addressList.Add(new Address
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                City = reader.GetString(reader.GetOrdinal("City")),
+                                Area = reader.GetString(reader.GetOrdinal("Area")),
+                                PinCode = reader.GetString(reader.GetOrdinal("PinCode")),
+                                EmployeeId = employeeId // This can be set directly since it's passed as a parameter
+                            });
+                        }
+                    }
+                }
+            }
+
+            return addressList;
+        }
     }
 }

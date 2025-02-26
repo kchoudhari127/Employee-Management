@@ -10,5 +10,7 @@ namespace Employee_Management.Core.Interfaces
     public interface IEmployeeRepository
     {
         Task<int> AddEmployeeAsync(Employee employee);
+        Task<int> UpdateAddressAsync(Address address);
+        Task<List<Address>> GetEmployeeAddressesAsync(int employeeId);
     }
 }
