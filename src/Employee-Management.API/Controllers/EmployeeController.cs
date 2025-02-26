@@ -44,7 +44,7 @@ namespace Employee_Management.API.Controllers
 
             return Ok(result);
         }
-<<<<<<< HEAD
+
 
         [HttpGet]
         [Route("{employeeId}/addresses")]
@@ -69,7 +69,6 @@ namespace Employee_Management.API.Controllers
         }
 
 
-=======
->>>>>>> a2ad6e61066e0de017e7c58fc38960ec8de31505
+
     }
 }

@@ -70,7 +70,7 @@ namespace Employee_Management.Repository.Repositories
 
         }
 
-<<<<<<< HEAD
+
         public async Task<List<Address>> GetEmployeeAddressesAsync(int employeeId)
         {
             var addressList = new List<Address>();
@@ -104,7 +104,5 @@ namespace Employee_Management.Repository.Repositories
 
             return addressList;
         }
-=======
->>>>>>> a2ad6e61066e0de017e7c58fc38960ec8de31505
     }
 }
