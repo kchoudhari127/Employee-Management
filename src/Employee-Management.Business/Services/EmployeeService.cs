@@ -3,6 +3,7 @@ using Employee_Management.Business.Interfaces;
 using Employee_Management.Core.DTOs;
 using Employee_Management.Core.Entities;
 using Employee_Management.Core.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,49 +15,45 @@ namespace Employee_Management.Business.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        private readonly ILogger<EmployeeService> _logger;
+        public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger)
         {
             _employeeRepository = employeeRepository;
+            _logger = logger;
         }
 
         public async Task<OperationResult> AddEmployeeAsync(EmployeeDto employeeDto)
         {
-            var employee = new Employee
+            try
             {
-                FirstName = employeeDto.FirstName,
-                LastName = employeeDto.LastName,
-                Designation = employeeDto.Designation,
-                ReportsToId = employeeDto.ReportsToId,
-                Addresses = employeeDto.Addresses.Select(a => new Address
+                var employee = new Employee
                 {
-                    City = a.City,
-                    Area = a.Area,
-                    PinCode = a.PinCode
-                }).ToList()
-            };
+                    FirstName = employeeDto.FirstName,
+                    LastName = employeeDto.LastName,
+                    Designation = employeeDto.Designation,
+                    ReportsToId = employeeDto.ReportsToId,
+                    Addresses = employeeDto.Addresses.Select(a => new Address
+                    {
+                        City = a.City,
+                        Area = a.Area,
+                        PinCode = a.PinCode
+                    }).ToList()
+                };
 
-              try
-              { 
-                  int rowsAffected = await _employeeRepository.AddEmployeeAsync(employee);
-
-                 return new OperationResult
-                 {
-                    Success = true,
-                    Message = "Employee added successfully.",
-                    StatusCode = 201 // Created
-                 };
-              }
-              catch (Exception ex)
-              {
-               // Log the exception (ex) as needed
+                int rowsAffected = await _employeeRepository.AddEmployeeAsync(employee);
 
                 return new OperationResult
                 {
-                   Success = false,
-                   Message = $"Error adding employee: {ex.Message}",
-                   StatusCode = 500 // Internal Server Error
+                    Success = true,
+                    Message = "Employee added successfully.",
+                    StatusCode = 201 // Created
                 };
-              }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding an employee.");
+                throw; // Rethrow the exception to be caught by the middleware
+            }
 
         }
 

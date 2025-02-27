@@ -17,10 +17,23 @@ obj/Debug/net9.0/EmployeeApp.API.assets.cache
 .vs/
 
 # Ignore DocumentLayout.backup.json file in .vs directory
-.vs/EmployeeApp.API/v17/DocumentLayout.backup.json
+.vs/Employee-Management.API/v17/DocumentLayout.backup.json
 
 # Ignore bin directory
 bin/
 
 # Ignore EmployeeApp.Repository.dll file in bin directory
-bin/Debug/net9.0/EmployeeApp.Repository.dll
+bin/Debug/net9.0/Employee-Management.Repository.dll
+
+# .gitignore file
+
+# Exclude specific log files
+src/Employee-Management.API/Logs/log-*.txt
+src/Employee-Management.API/Logs/log-txt*
+src/Employee-Management.API/Logs1/log-*.txt
+src/Employee-Management.API/Logs1/log-txt*
+
+# Exclude entire log folders (if needed)
+src/Employee-Management.API/Logs/
+src/Employee-Management.API/Logs1/
+

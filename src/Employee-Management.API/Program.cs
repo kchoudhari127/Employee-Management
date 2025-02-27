@@ -1,3 +1,4 @@
+using Employee_Management.API.Middlewares;
 using Employee_Management.Business.Interfaces;
 using Employee_Management.Business.Services;
 using Employee_Management.Core.Interfaces;
@@ -5,9 +6,19 @@ using Employee_Management.Repository.Data;
 using Employee_Management.Repository.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Set up Serilog configuration
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -36,6 +47,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Register the middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
