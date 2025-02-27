@@ -14,6 +14,7 @@ namespace Employee_Management.Core.Interfaces
         Task<int> UpdateAddressAsync(Address address);
         Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId);
         Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId);
+        Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId);
 
     }
 }

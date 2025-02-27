@@ -139,5 +139,39 @@ namespace Employee_Management.Repository.Repositories
             return employeeList;
         }
 
+        public async Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId)
+        {
+            var manager = new List<ManagerDto>();
+
+            using (var connection = _context.Database.GetDbConnection())
+            {
+                await connection.OpenAsync();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "GetManagerForEmployee";
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@EmployeeId", employeeId));
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            manager.Add( new ManagerDto
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Designation = reader.GetString(reader.GetOrdinal("Designation"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return manager;
+        }
+
+
     }
 }

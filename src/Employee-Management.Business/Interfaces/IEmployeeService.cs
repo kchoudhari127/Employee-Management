@@ -16,6 +16,7 @@ namespace Employee_Management.Business.Interfaces
 
         Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId);
         Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId);
+        Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId);
 
     }
 }

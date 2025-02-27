@@ -130,5 +130,45 @@ namespace Employee_Management.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("{employeeId}/manager")]
+        public async Task<IActionResult> GetManagerForEmployee(int employeeId)
+        {
+            try
+            {
+                var manager = await _employeeService.GetManagerForEmployeeAsync(employeeId);
+
+                var response = new ManagerResponceDto();
+
+                if (manager.Count > 0)
+                {
+                    response = new ManagerResponceDto
+                    {
+                        Success = true,
+                        Message = "The manager records have been retrieved successfully.",
+                        StatusCode = 200, // OK
+                        managers = manager
+
+                    };
+                }
+                else
+                {
+                    response = new ManagerResponceDto
+                    {
+                        Success = false,
+                        Message = "No manages found reporting to the specified manager.",
+                        StatusCode = 404, // Not Found
+                        managers = manager
+                    };
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) as needed
+                return StatusCode(500, new { message = "An error occurred while retrieving the manager.", details = ex.Message });
+            }
+        }
     }
 }

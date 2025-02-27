@@ -118,6 +118,12 @@ namespace Employee_Management.Business.Services
             return await _employeeRepository.GetEmployeesReportingToManagerAsync(managerId);
         }
 
+        public async Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId)
+        {
+            return await _employeeRepository.GetManagerForEmployeeAsync(employeeId);
+        }
+
+
 
     }
 }
