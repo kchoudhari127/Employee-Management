@@ -30,7 +30,7 @@ namespace Employee_Management.Repository.Repositories
         {
             try
             {
-                var addressDataTable = new DataTable();
+                 var addressDataTable = new DataTable();
                 addressDataTable.Columns.Add("City", typeof(string));
                 addressDataTable.Columns.Add("Area", typeof(string));
                 addressDataTable.Columns.Add("PinCode", typeof(string));
@@ -67,138 +67,214 @@ namespace Employee_Management.Repository.Repositories
             catch (DbException ex)
             {
                 _logger.LogError(ex, "A database error occurred while adding the employee.");
-
-                // Rethrow the exception to be caught by the middleware
                 throw;
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _logger.LogError(ex, "An error occurred while adding the employee.");
-
-                // Rethrow the exception to be caught by the middleware
                 throw;
             }
         }
 
         public async Task<int> UpdateAddressAsync(Address address)
         {
-            var parameters = new[]
+            try
             {
-               new SqlParameter("@AddressId", SqlDbType.Int) { Value = address.Id },
-               new SqlParameter("@City", SqlDbType.NVarChar) { Value = address.City },
-               new SqlParameter("@Area", SqlDbType.NVarChar) { Value = address.Area },
-               new SqlParameter("@PinCode", SqlDbType.NVarChar) { Value = address.PinCode }
-            };
 
-             int rowsAffected = await _context.Database.ExecuteSqlRawAsync(
-                   "EXEC UpdateAddress @AddressId, @City, @Area, @PinCode",
-                   parameters
-               );
+                var parameters = new[]
+                {
+                   new SqlParameter("@AddressId", SqlDbType.Int) { Value = address.Id },
+                   new SqlParameter("@City", SqlDbType.NVarChar) { Value = address.City },
+                   new SqlParameter("@Area", SqlDbType.NVarChar) { Value = address.Area },
+                   new SqlParameter("@PinCode", SqlDbType.NVarChar) { Value = address.PinCode }
+                };
 
-            return rowsAffected;
+                int rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                      "EXEC UpdateAddress @AddressId, @City, @Area, @PinCode",
+                      parameters
+                  );
+
+                return rowsAffected;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "A database error occurred while updating the employee.");
+
+                // Rethrow the exception to be caught by the middleware
+                throw;
+            }
+            catch (DbException ex)
+            {
+                _logger.LogError(ex, "A database error occurred while updating the employee.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating the employee.");
+                throw;
+            }
 
         }
 
 
         public async Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId)
         {
-            var addressList = new List<GetAddressDto>();
+            try
+            { 
+                 var addressList = new List<GetAddressDto>();
 
-            using (var connection = _context.Database.GetDbConnection())
-            {
-                await connection.OpenAsync();
+                 using (var connection = _context.Database.GetDbConnection())
+                 {
+                      await connection.OpenAsync();
 
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = "GetEmployeeAddresses";
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter("@EmployeeId", employeeId));
+                      using (var command = connection.CreateCommand())
+                     {
+                          command.CommandText = "GetEmployeeAddresses";
+                          command.CommandType = System.Data.CommandType.StoredProcedure;
+                          command.Parameters.Add(new SqlParameter("@EmployeeId", employeeId));
 
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            addressList.Add(new GetAddressDto
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                City = reader.GetString(reader.GetOrdinal("City")),
-                                Area = reader.GetString(reader.GetOrdinal("Area")),
-                                PinCode = reader.GetString(reader.GetOrdinal("PinCode")),
-                                EmployeeId = employeeId // This can be set directly since it's passed as a parameter
-                            });
-                        }
-                    }
-                }
+                         using (var reader = await command.ExecuteReaderAsync())
+                         {
+                             while (await reader.ReadAsync())
+                             {
+                                 addressList.Add(new GetAddressDto
+                                 {
+                                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                     City = reader.GetString(reader.GetOrdinal("City")),
+                                     Area = reader.GetString(reader.GetOrdinal("Area")),
+                                    PinCode = reader.GetString(reader.GetOrdinal("PinCode")),
+                                    EmployeeId = employeeId // This can be set directly since it's passed as a parameter
+                                 });
+                             }
+                         }
+                      }
+                 }
+
+                    return addressList;
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Employee Addresses.");
 
-            return addressList;
+                // Rethrow the exception to be caught by the middleware
+                throw;
+            }
+            catch (DbException ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Employee Addresses.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Employee Addresses.");
+                throw;
+            }
         }
 
         public async Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId)
         {
-            var employeeList = new List<GetEmployeeDto>();
+            try
+            { 
+                 var employeeList = new List<GetEmployeeDto>();
 
-            using (var connection = _context.Database.GetDbConnection())
-            {
-                await connection.OpenAsync();
+                 using (var connection = _context.Database.GetDbConnection())
+                 {
+                       await connection.OpenAsync();
 
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = "GetEmployeesReportingToManager";
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter("@ManagerId", managerId));
-
-                    using (var reader = await command.ExecuteReaderAsync())
+                    using (var command = connection.CreateCommand())
                     {
-                        while (await reader.ReadAsync())
-                        {
-                            employeeList.Add(new GetEmployeeDto
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                Designation = reader.GetString(reader.GetOrdinal("Designation"))
-                            });
-                        }
-                    }
-                }
-            }
+                        command.CommandText = "GetEmployeesReportingToManager";
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@ManagerId", managerId));
 
-            return employeeList;
+                       using (var reader = await command.ExecuteReaderAsync())
+                       {
+                           while (await reader.ReadAsync())
+                           {
+                                employeeList.Add(new GetEmployeeDto
+                               {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                    Designation = reader.GetString(reader.GetOrdinal("Designation"))
+                                });
+                           }
+                       }
+                    }
+                 }
+
+                return employeeList;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Employees Reporting To Managers.");
+
+                // Rethrow the exception to be caught by the middleware
+                throw;
+            }
+            catch (DbException ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Employees Reporting To Managers.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Employees Reporting To Managers.");
+                 throw;
+            }
         }
 
         public async Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId)
         {
-            var manager = new List<ManagerDto>();
+            try
+            { 
+                var manager = new List<ManagerDto>();
 
-            using (var connection = _context.Database.GetDbConnection())
-            {
-                await connection.OpenAsync();
-
-                using (var command = connection.CreateCommand())
+                using (var connection = _context.Database.GetDbConnection())
                 {
-                    command.CommandText = "GetManagerForEmployee";
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter("@EmployeeId", employeeId));
+                     await connection.OpenAsync();
 
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            manager.Add( new ManagerDto
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                Designation = reader.GetString(reader.GetOrdinal("Designation"))
-                            });
+                   using (var command = connection.CreateCommand())
+                   {
+                       command.CommandText = "GetManagerForEmployee";
+                       command.CommandType = System.Data.CommandType.StoredProcedure;
+                       command.Parameters.Add(new SqlParameter("@EmployeeId", employeeId));
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                       {
+                           if (await reader.ReadAsync())
+                           {
+                               manager.Add( new ManagerDto
+                               {
+                                   Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                   FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                   LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                   Designation = reader.GetString(reader.GetOrdinal("Designation"))
+                               });
+                           }
                         }
-                    }
+                   }
                 }
-            }
 
-            return manager;
+                  return manager;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Manager for an Employee.");
+
+                // Rethrow the exception to be caught by the middleware
+                throw;
+            }
+            catch (DbException ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Manager for an Employee.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "A database error occurred getting Manager for an Employee.");
+                throw;
+            }
         }
 
 

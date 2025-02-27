@@ -22,102 +22,71 @@ namespace Employee_Management.Business.Services
             _logger = logger;
         }
 
-        public async Task<OperationResult> AddEmployeeAsync(EmployeeDto employeeDto)
+        public async Task<int> AddEmployeeAsync(Employee employee)
         {
             try
             {
-                var employee = new Employee
-                {
-                    FirstName = employeeDto.FirstName,
-                    LastName = employeeDto.LastName,
-                    Designation = employeeDto.Designation,
-                    ReportsToId = employeeDto.ReportsToId,
-                    Addresses = employeeDto.Addresses.Select(a => new Address
-                    {
-                        City = a.City,
-                        Area = a.Area,
-                        PinCode = a.PinCode
-                    }).ToList()
-                };
-
                 int rowsAffected = await _employeeRepository.AddEmployeeAsync(employee);
-
-                return new OperationResult
-                {
-                    Success = true,
-                    Message = "Employee added successfully.",
-                    StatusCode = 201 // Created
-                };
+                return rowsAffected;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while adding an employee.");
+                _logger.LogError(ex.Message, "An error occurred while adding an employee.");
                 throw; // Rethrow the exception to be caught by the middleware
             }
-
         }
-
-        public async Task<OperationResult> UpdateAddressAsync(UpdateAddressDto updateAddressDto)
+        public async Task<int> UpdateAddressAsync(Address address)
         {
-            var address = new Address
-            {       
-                    Id   = updateAddressDto.AddressId,
-                    City = updateAddressDto.City,
-                    Area = updateAddressDto.Area,
-                    PinCode = updateAddressDto.PinCode
-            };
-
             try
             {
                 int rowsAffected = await _employeeRepository.UpdateAddressAsync(address);
-
-                if (rowsAffected > 0)
-                {
-                    return new OperationResult
-                    {
-                        Success = true,
-                        Message = "Address updated successfully.",
-                        StatusCode = 200 // OK
-                    };
-                }
-                else
-                {
-                    return new OperationResult
-                    {
-                        Success = false,
-                        Message = "Address not found.",
-                        StatusCode = 404 // Not Found
-                    };
-                }
-
+                return rowsAffected;
             }
             catch (Exception ex)
             {
-                // Log the exception (ex) as needed
-
-                return new OperationResult
-                {
-                    Success = false,
-                    Message = $"Error updating address: {ex.Message}",
-                    StatusCode = 500 // Internal Server Error
-                };
+                _logger.LogError(ex.Message, "An error occurred while updating address.");
+                throw; // Rethrow the exception to be caught by the middleware
             }
         }
 
 
         public async Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId)
         {
-            return await _employeeRepository.GetEmployeeAddressesAsync(employeeId);
+            try
+            {
+                return await _employeeRepository.GetEmployeeAddressesAsync(employeeId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "An error occurred while Getting address.");
+                throw; // Rethrow the exception to be caught by the middleware
+            }
         }
 
         public async Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId)
         {
-            return await _employeeRepository.GetEmployeesReportingToManagerAsync(managerId);
+            try
+            {
+                return await _employeeRepository.GetEmployeesReportingToManagerAsync(managerId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "An error occurred while Getting Employees Reporting To Manager.");
+                throw; // Rethrow the exception to be caught by the middleware
+            }
         }
 
         public async Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId)
         {
-            return await _employeeRepository.GetManagerForEmployeeAsync(employeeId);
+            try
+            { 
+                  return await _employeeRepository.GetManagerForEmployeeAsync(employeeId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "An error occurred while Getting Manager For Employee.");
+                throw; // Rethrow the exception to be caught by the middleware
+            }
         }
 
 

@@ -13,15 +13,15 @@ namespace Employee_Management.Core.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "FirstName is required.")]
         [MaxLength(50)]
         public string FirstName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "LastName is required.")]
         [MaxLength(50)]
         public string LastName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Designation is required.")]
         [MaxLength(100)]
         public string Designation { get; set; }
 

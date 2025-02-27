@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Employee_Management.Business.DTOs;
 using Employee_Management.Business.Interfaces;
+using Employee_Management.Business.Services;
 using Employee_Management.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,40 +14,128 @@ namespace Employee_Management.API.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly ILogger<EmployeeService> _logger;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeeController(IEmployeeService employeeService, ILogger<EmployeeService> logger)
         {
             _employeeService = employeeService;
+            _logger = logger;
         }
 
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateEmployee(EmployeeDto employeeDto)
         {
-            if (employeeDto == null)
+            try
             {
-                return BadRequest("Employee data is null");
+                if (employeeDto == null)
+                {
+                    return BadRequest("Employee data is null");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    // Collect all error messages
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    return BadRequest(new { Errors = errors });
+                }
+
+                var employee = new Employee
+                {
+                    FirstName = employeeDto.FirstName,
+                    LastName = employeeDto.LastName,
+                    Designation = employeeDto.Designation,
+                    ReportsToId = employeeDto.ReportsToId,
+                    Addresses = employeeDto.Addresses.Select(a => new Address
+                    {
+                        City = a.City,
+                        Area = a.Area,
+                        PinCode = a.PinCode
+                    }).ToList()
+                };
+
+                var result = await _employeeService.AddEmployeeAsync(employee);
+
+                var response = new OperationResult
+                {
+                    Success = true,
+                    Message = "Employee added successfully.",
+                    StatusCode = 201 // Created
+                };
+
+                return Ok(response);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding the employee: {@Employee}", employeeDto.FirstName);
 
-           var result = await _employeeService.AddEmployeeAsync(employeeDto);
-
-            return Ok(result);
+                throw; // Rethrow the exception to be caught by the middleware
+            }
         }
 
         [HttpPut]
         [Route("updateAddress")]
         public async Task<IActionResult> UpdateAddress([FromBody] UpdateAddressDto updateAddressDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+           try
+           { 
+                if (!ModelState.IsValid)
+                {
+                    // Collect all error messages
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
 
-            var result = await _employeeService.UpdateAddressAsync(updateAddressDto);
+                    return BadRequest(new { Errors = errors });
+                }
 
-            return Ok(result);
+                var address = new Address
+                {
+                   Id = updateAddressDto.AddressId,
+                   City = updateAddressDto.City,
+                   Area = updateAddressDto.Area,
+                   PinCode = updateAddressDto.PinCode
+                };
+
+                var result = await _employeeService.UpdateAddressAsync(address);
+
+                var response = new OperationResult();
+
+               if (result > 0)
+               {
+                   response = new OperationResult
+                   {
+                       Success = true,
+                       Message = "Address updated successfully.",
+                       StatusCode = 200 // OK
+                   };
+               }
+              else
+              {
+                  response = new OperationResult
+                  {
+                      Success = false,
+                      Message = "Address not found.",
+                      StatusCode = 404 // Not Found
+                  };
+              }
+
+               return Ok(response);
+
+           }
+           catch (Exception ex)
+           {
+                  _logger.LogError(ex.Message, "An error occurred while updating an employee.");
+
+                  throw; // Rethrow the exception to be caught by the middleware
+           }
+
         }
-
 
         [HttpGet]
         [Route("{employeeId}/addresses")]
@@ -84,8 +173,8 @@ namespace Employee_Management.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (ex) as needed
-                return StatusCode(500, new { message = "An error occurred while retrieving addresses.", details = ex.Message });
+                _logger.LogError(ex.Message, "An error occurred while retrieving addresses.");
+                throw; // Rethrow the exception to be caught by the middleware
             }
         }
 
@@ -125,8 +214,8 @@ namespace Employee_Management.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (ex) as needed
-                return StatusCode(500, new { message = "An error occurred while retrieving employees.", details = ex.Message });
+                _logger.LogError(ex.Message, "An error occurred while retrieving employees reporting to the specified manager.");
+                throw; // Rethrow the exception to be caught by the middleware
             }
         }
 
@@ -166,8 +255,8 @@ namespace Employee_Management.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (ex) as needed
-                return StatusCode(500, new { message = "An error occurred while retrieving the manager.", details = ex.Message });
+                _logger.LogError(ex.Message, "An error occurred while retrieving the manager..");
+                throw; // Rethrow the exception to be caught by the middleware
             }
         }
     }

@@ -11,9 +11,8 @@ namespace Employee_Management.Business.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<OperationResult> AddEmployeeAsync(EmployeeDto employeeDto);
-        Task<OperationResult> UpdateAddressAsync(UpdateAddressDto updateAddressDto);
-
+        Task<int> AddEmployeeAsync(Employee employee);
+        Task<int> UpdateAddressAsync(Address address);
         Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId);
         Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId);
         Task<List<ManagerDto>> GetManagerForEmployeeAsync(int employeeId);

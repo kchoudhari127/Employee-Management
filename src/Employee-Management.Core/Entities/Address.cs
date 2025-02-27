@@ -13,15 +13,15 @@ namespace Employee_Management.Core.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "City is required.")]
         [MaxLength(100)]
         public string City { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Area is required.")]
         [MaxLength(100)]
         public string Area { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "PinCode is required.")]
         [MaxLength(20)]
         public string PinCode { get; set; }
 
