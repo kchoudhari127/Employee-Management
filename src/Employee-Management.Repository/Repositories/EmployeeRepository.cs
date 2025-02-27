@@ -40,17 +40,22 @@ namespace Employee_Management.Repository.Repositories
                     addressDataTable.Rows.Add(address.City, address.Area, address.PinCode);
                 }
 
+                   if(employee.ReportsToId == 0)
+                   {
+                       employee.ReportsToId = null;
+                   }
+
                   var parameters = new[]
                   {
                        new SqlParameter("@FirstName", SqlDbType.NVarChar) { Value = employee.FirstName },
                        new SqlParameter("@LastName", SqlDbType.NVarChar) { Value = employee.LastName },
                        new SqlParameter("@Designation", SqlDbType.NVarChar) { Value = employee.Designation },
                        new SqlParameter("@ReportsToId", SqlDbType.Int) { Value = (object)employee.ReportsToId ?? DBNull.Value },
-                    new SqlParameter("@AddressTable", SqlDbType.Structured)
-                    {
-                       TypeName = "AddressType",
-                       Value = addressDataTable
-                    }
+                       new SqlParameter("@AddressTable", SqlDbType.Structured)
+                       {
+                          TypeName = "AddressType",
+                          Value = addressDataTable
+                       }
                   };
 
                 _logger.LogInformation("Executing SQL command to add employee.");
