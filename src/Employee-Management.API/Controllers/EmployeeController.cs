@@ -1,5 +1,7 @@
-﻿using Employee_Management.Business.DTOs;
+﻿using Azure;
+using Employee_Management.Business.DTOs;
 using Employee_Management.Business.Interfaces;
+using Employee_Management.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -52,14 +54,33 @@ namespace Employee_Management.API.Controllers
         {
             try
             {
-                var addresses = await _employeeService.GetEmployeeAddressesAsync(employeeId);
+                var results = await _employeeService.GetEmployeeAddressesAsync(employeeId);
 
-                if (addresses == null || addresses.Count == 0)
+                var response = new AddressResponceDto();
+
+                if (results.Count > 0)
                 {
-                    return NotFound(new { message = "No addresses found for the specified employee." });
+                    response = new AddressResponceDto
+                    {
+                        Success = true,
+                        Message = "The address records have been retrieved successfully.",
+                        StatusCode = 200, // OK
+                        addresses = results
+
+                    };
+                }
+                else
+                {
+                    response = new AddressResponceDto
+                    {
+                        Success = false,
+                        Message = "No addresses found for the specified employee.",
+                        StatusCode = 404, // Not Found
+                        addresses = results
+                    };
                 }
 
-                return Ok(addresses);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -68,7 +89,46 @@ namespace Employee_Management.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("{managerId}/employees")]
+        public async Task<IActionResult> GetEmployeesReportingToManager(int managerId)
+        {
+            try
+            {
+                var result = await _employeeService.GetEmployeesReportingToManagerAsync(managerId);
 
+                var response = new EmployeeResponceDto();
+
+                if (result.Count > 0)
+                {
+                    response = new EmployeeResponceDto
+                    {
+                        Success = true,
+                        Message = "The employee records have been retrieved successfully.",
+                        StatusCode = 200 , // OK
+                        employees = result
+
+                    };
+                }
+                else
+                {
+                    response = new EmployeeResponceDto
+                    {
+                        Success = false,
+                        Message = "No employees found reporting to the specified manager.",
+                        StatusCode = 404, // Not Found
+                        employees = result
+                    };
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) as needed
+                return StatusCode(500, new { message = "An error occurred while retrieving employees.", details = ex.Message });
+            }
+        }
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Employee_Management.Business.DTOs;
 using Employee_Management.Business.Interfaces;
+using Employee_Management.Core.DTOs;
 using Employee_Management.Core.Entities;
 using Employee_Management.Core.Interfaces;
 using System;
@@ -107,9 +108,14 @@ namespace Employee_Management.Business.Services
         }
 
 
-        public async Task<List<Address>> GetEmployeeAddressesAsync(int employeeId)
+        public async Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId)
         {
             return await _employeeRepository.GetEmployeeAddressesAsync(employeeId);
+        }
+
+        public async Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId)
+        {
+            return await _employeeRepository.GetEmployeesReportingToManagerAsync(managerId);
         }
 
 

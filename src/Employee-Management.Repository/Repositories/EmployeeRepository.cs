@@ -1,4 +1,5 @@
-﻿using Employee_Management.Core.Entities;
+﻿using Employee_Management.Core.DTOs;
+using Employee_Management.Core.Entities;
 using Employee_Management.Core.Interfaces;
 using Employee_Management.Repository.Data;
 using Microsoft.Data.SqlClient;
@@ -71,9 +72,9 @@ namespace Employee_Management.Repository.Repositories
         }
 
 
-        public async Task<List<Address>> GetEmployeeAddressesAsync(int employeeId)
+        public async Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId)
         {
-            var addressList = new List<Address>();
+            var addressList = new List<GetAddressDto>();
 
             using (var connection = _context.Database.GetDbConnection())
             {
@@ -89,7 +90,7 @@ namespace Employee_Management.Repository.Repositories
                     {
                         while (await reader.ReadAsync())
                         {
-                            addressList.Add(new Address
+                            addressList.Add(new GetAddressDto
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 City = reader.GetString(reader.GetOrdinal("City")),
@@ -104,5 +105,39 @@ namespace Employee_Management.Repository.Repositories
 
             return addressList;
         }
+
+        public async Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId)
+        {
+            var employeeList = new List<GetEmployeeDto>();
+
+            using (var connection = _context.Database.GetDbConnection())
+            {
+                await connection.OpenAsync();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "GetEmployeesReportingToManager";
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@ManagerId", managerId));
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            employeeList.Add(new GetEmployeeDto
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Designation = reader.GetString(reader.GetOrdinal("Designation"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return employeeList;
+        }
+
     }
 }

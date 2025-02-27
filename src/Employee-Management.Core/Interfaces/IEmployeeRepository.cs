@@ -1,4 +1,5 @@
-﻿using Employee_Management.Core.Entities;
+﻿using Employee_Management.Core.DTOs;
+using Employee_Management.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace Employee_Management.Core.Interfaces
     {
         Task<int> AddEmployeeAsync(Employee employee);
         Task<int> UpdateAddressAsync(Address address);
-
-        Task<List<Address>> GetEmployeeAddressesAsync(int employeeId);
+        Task<List<GetAddressDto>> GetEmployeeAddressesAsync(int employeeId);
+        Task<List<GetEmployeeDto>> GetEmployeesReportingToManagerAsync(int managerId);
 
     }
 }
