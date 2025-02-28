@@ -15,6 +15,8 @@ Stored procedures and API endpoints for managing employee data.
 - Entity Framework Core
 - Serilog
 - SQL Server
+- xunit
+- Moq
 
 - ## Installation
 
