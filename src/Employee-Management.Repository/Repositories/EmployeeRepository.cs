@@ -171,7 +171,7 @@ namespace Employee_Management.Repository.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, "A database error occurred getting Employee Addresses.");
+                _logger.LogError(ex.Message, "An error occurred getting Employee Addresses.");
                 throw;
             }
         }
@@ -224,7 +224,7 @@ namespace Employee_Management.Repository.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, "A database error occurred getting Employees Reporting To Managers.");
+                _logger.LogError(ex.Message, "An error occurred getting Employees Reporting To Managers.");
                  throw;
             }
         }
@@ -277,7 +277,7 @@ namespace Employee_Management.Repository.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, "A database error occurred getting Manager for an Employee.");
+                _logger.LogError(ex.Message, "An error occurred getting Manager for an Employee.");
                 throw;
             }
         }
